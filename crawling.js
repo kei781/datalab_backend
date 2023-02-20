@@ -8,52 +8,42 @@ async function getData() {
   await page.goto(
     "https://datalab.labangba.com/user/sign_in?redirect=%2Frecruit"
   );
-  // 로그인 폼 입력
-  await page.evaluate(() => {
-    // 아이디 입력 요소 선택
-    const usernameInput = document.querySelector(
-      '.sign_in_form__ZaLrU input[type="text"]'
-    );
+  await page.waitForSelector('.sign_in_form__ZaLrU input[type="text"]');
+  await page.waitForSelector('.sign_in_form__ZaLrU input[type="password"]');
+  await page.waitForSelector(
+    ".ButtonForm_default___C1Dg.ButtonForm_first__lTZeg"
+  );
 
-    // 패스워드 입력 요소 선택
-    const passwordInput = document.querySelector(
-      '.sign_in_form__ZaLrU input[type="password"]'
-    );
+  await page.type(
+    '.sign_in_form__ZaLrU input[type="text"]',
+    "kei781@naver.com"
+  );
+  await page.type('.sign_in_form__ZaLrU input[type="password"]', "1q2w3e4r!!+");
+  await page.click(".ButtonForm_default___C1Dg.ButtonForm_first__lTZeg");
 
-    // 선택된 입력 요소에 값을 입력
-    usernameInput.value = "kei781@naver.com";
-    passwordInput.value = "1q2w3e4r!!+";
-    // 로그인 폼 제출
-    const button = document.querySelector(
-      ".ButtonForm_default___C1Dg.ButtonForm_first__lTZeg"
-    );
-    button.click();
-    console.log("클릭까진완료");
-  });
   // 로그인 후에 인증된 사용자만 접근 가능한 페이지로 이동
-  await page.goto("https://datalab.labangba.com/recruit");
+  await page.waitForNavigation();
+  await page.waitForSelector(".Table_table___jpMW tbody");
   const data = await page.evaluate(() => {
-    const tableBody = document.querySelector("tbody");
+    const tableBody = document.querySelector(".Table_table___jpMW tbody");
     const rows = tableBody.querySelectorAll("tr");
     const result = [];
 
     rows.forEach((row) => {
       const cells = row.querySelectorAll("td");
       const rowData = [];
-
       cells.forEach((cell) => {
         rowData.push(cell.textContent);
       });
-
       result.push(rowData);
     });
-
     return result;
   });
-
   await browser.close();
-
+  console.log(data);
   return data;
 }
-
+module.exports = {
+  getData,
+};
 getData().then((data) => console.log(data));
