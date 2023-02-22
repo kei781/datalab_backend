@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const { getData } = require("./crawling.js");
+const cors = require("cors");
 
+app.use(cors());
 app.get("/data", async (req, res) => {
   try {
     const data = await getData();
