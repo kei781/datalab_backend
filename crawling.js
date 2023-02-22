@@ -43,9 +43,25 @@ async function getData() {
       const revenue = row.querySelector("td:nth-child(7) > span ");
       const products = row.querySelector("td:nth-child(8)");
 
-      const viewsMatch = views?.textContent?.match(/(\d+(?:[.]\d+)?)(만)?/);
-      const soldMatch = sold?.textContent?.match(/(\d+(?:[.]\d+)?)(만)?/);
+      const viewsMatch = views?.textContent?.match(/(\d+(?:[,.]\d+)?)(만)?/);
+      const soldMatch = sold?.textContent?.match(/(\d+(?:[,.]\d+)?)(만)?/);
+
+      const viewsNum = viewsMatch
+        ? viewsMatch[1].replace(",", "").replace(".", "") +
+          (viewsMatch[2] ? "0000" : "")
+        : null;
+
+      const soldNum = soldMatch
+        ? soldMatch[1].replace(",", "").replace(".", "") +
+          (soldMatch[2] ? "0000" : "")
+        : null;
+
       const revenueMatch = revenue?.textContent?.match(/(\d+(?:[.]\d+)?)(억)?/);
+      const revenueValue = revenueMatch
+        ? revenueMatch[2]
+          ? Number(revenueMatch[1].replace(".", "") + "00000000")
+          : Number(revenueMatch[1].replace(/,/g, ""))
+        : null;
       return {
         index: Number(index?.textContent),
         title: title?.textContent,
@@ -53,11 +69,9 @@ async function getData() {
         link: title?.parentNode?.href,
         category: category?.textContent,
         time: { date: date?.textContent, hour: hour?.textContent },
-        views: viewsMatch ? Number(viewsMatch[1] * 10000) : null,
-        sold: soldMatch ? Number(soldMatch[1] * 10000) : null,
-        revenue: revenueMatch
-          ? Number(parseInt(revenueMatch[1] * 100000000))
-          : null,
+        views: viewsNum ? Number(viewsNum) : null,
+        sold: soldNum ? Number(soldNum) : null,
+        revenue: revenueValue,
         products: Number(products?.textContent?.replace(/,/g, "")),
       };
     });
