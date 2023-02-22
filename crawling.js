@@ -43,25 +43,21 @@ async function getData() {
       const revenue = row.querySelector("td:nth-child(7) > span ");
       const products = row.querySelector("td:nth-child(8)");
 
+      //정규식
       const viewsMatch = views?.textContent?.match(/(\d+(?:[,.]\d+)?)(만)?/);
       const soldMatch = sold?.textContent?.match(/(\d+(?:[,.]\d+)?)(만)?/);
-
-      const viewsNum = viewsMatch
-        ? viewsMatch[1].replace(",", "").replace(".", "") +
-          (viewsMatch[2] ? "0000" : "")
-        : null;
-
-      const soldNum = soldMatch
-        ? soldMatch[1].replace(",", "").replace(".", "") +
-          (soldMatch[2] ? "0000" : "")
-        : null;
-
       const revenueMatch = revenue?.textContent?.match(/(\d+(?:[.]\d+)?)(억)?/);
-      const revenueValue = revenueMatch
-        ? revenueMatch[2]
-          ? Number(revenueMatch[1].replace(".", "") + "00000000")
-          : Number(revenueMatch[1].replace(/,/g, ""))
-        : null;
+
+      const viewsNum = viewsMatch[2]
+        ? parseInt(parseFloat(viewsMatch[1].replace(",", "")) * 10000)
+        : parseInt(viewsMatch[1].replace(",", "").replace(".", ""));
+      const soldNum = soldMatch[2]
+        ? parseInt(parseFloat(soldMatch[1].replace(",", "")) * 10000)
+        : parseInt(soldMatch[1].replace(",", "").replace(".", ""));
+
+      const revenueValue = revenueMatch[2]
+        ? parseInt(parseFloat(revenueMatch[1].replace(",", "") * 100000000))
+        : parseInt(revenueMatch[1].replace(",", "").replace(".", ""));
       return {
         index: Number(index?.textContent),
         title: title?.textContent,
